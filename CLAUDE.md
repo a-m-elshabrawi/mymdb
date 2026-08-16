@@ -37,6 +37,7 @@ Supabase lives in its own dedicated project — it is **not** shared with any ot
 | Area | Decision |
 |---|---|
 | **Core loop** | Search → detail → log → your library |
+| **Routing** | `/` is the **public marketing landing page** (added post-v1) — no auth required, and the only indexable, shareable page. The authenticated dashboard lives at **`/home`**. Middleware: `/` is exempt from the auth check; a logged-in user hitting `/` is redirected to `/home`; a logged-out user hitting `/home` (or any gated route) goes to `/login?next=…`; logged-in users on `/login` or `/signup` are sent to `/home`. Default post-login/signup redirect is `/home`. Marketing chrome lives in the `(marketing)` route group with its own header (Sign in / Create account); the app shell stays in `(app)`. |
 | **Naming** | The "Films" grid/nav item was renamed to "Library" in Stage 5 — the route is `/library`, not `/films`. It holds everything with a status other than `watchlist` (watched/watching/dropped); the watchlist has its own page. |
 | **TV depth** | Title-level logging only in v1. No episode checkboxes. Schema is pre-shaped so episodes can be added later without a migration. |
 | **Data strategy** | Cache-on-demand. The first time any title is touched, upsert it into a local `media` table. List pages join locally — zero TMDB calls. Live *search* still hits TMDB. |
@@ -101,7 +102,7 @@ TMDB_READ_ACCESS_TOKEN=
 | Stage | Contents | Status |
 |---|---|---|
 | 1 | Scaffold, design tokens, Supabase schema + RLS, TMDB adapter, health check, SETUP.md | done |
-| 2 | Auth — signup, login, logout, route protection middleware, nav shell | done |
+| 2 | Auth — signup, login, logout, route protection middleware, nav shell. (Post-v1: `/` is no longer the authenticated dashboard — it's the public landing page, and the dashboard moved to `/home`; see the **Routing** decision above.) | done |
 | 3 | Search + title detail page, `media` cache-on-demand upsert | done |
 | 4 | Logging — rating, date, review, rewatch; `user_media` state transitions | done |
 | 5 | Your Library grid (sort/filter) + Diary view | done |

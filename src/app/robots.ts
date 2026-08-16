@@ -1,12 +1,24 @@
 import type { MetadataRoute } from "next";
 
-// This is a private app — no part of it should be indexed by search
-// engines. Disallow everything.
+// Only the public marketing landing page ("/") is indexable. Everything else
+// is a user's private app surface and must stay out of search results.
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      disallow: "/",
+      allow: "/",
+      disallow: [
+        "/home",
+        "/library",
+        "/diary",
+        "/watchlist",
+        "/search",
+        "/movie",
+        "/tv",
+        "/login",
+        "/signup",
+        "/dev",
+      ],
     },
   };
 }

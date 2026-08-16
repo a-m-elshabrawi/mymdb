@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -13,6 +13,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { signOut } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 
@@ -33,9 +42,50 @@ export function SiteHeader({ email }: { email: string }) {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between gap-4 px-6">
-        <div className="flex min-w-0 items-center gap-6">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-6">
+          {/* Hamburger — small screens only. Opens the nav in a drawer instead
+              of tucking it inside the account menu. */}
+          <Sheet>
+            <SheetTrigger
+              aria-label="Open menu"
+              className={cn(
+                "flex size-8 items-center justify-center rounded-md text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring sm:hidden",
+                mobileSearchOpen && "hidden",
+              )}
+            >
+              <Menu className="size-5" />
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64">
+              <SheetHeader>
+                <SheetTitle className="text-base tracking-tight">MyMDB</SheetTitle>
+                <SheetDescription className="sr-only">Main navigation</SheetDescription>
+              </SheetHeader>
+              <nav className="flex flex-col gap-1 px-2">
+                {navItems.map((item) => {
+                  const active = pathname === item.href;
+                  return (
+                    <SheetClose asChild key={item.href}>
+                      <Link
+                        href={item.href}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          "rounded-md px-3 py-2 text-sm transition-colors",
+                          active
+                            ? "bg-surface-hover text-foreground"
+                            : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
+                        )}
+                      >
+                        {item.label}
+                      </Link>
+                    </SheetClose>
+                  );
+                })}
+              </nav>
+            </SheetContent>
+          </Sheet>
+
           <Link
-            href="/"
+            href="/home"
             className={cn(
               "shrink-0 text-sm font-semibold tracking-tight text-foreground",
               mobileSearchOpen && "hidden sm:block",
@@ -126,18 +176,8 @@ export function SiteHeader({ email }: { email: string }) {
             {initial}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            {/* Below sm, the header nav is hidden — the same links live here instead. */}
-            <div className="sm:hidden">
-              {navItems.map((item) => (
-                <DropdownMenuItem key={item.href} asChild>
-                  <Link href={item.href} aria-current={pathname === item.href ? "page" : undefined}>
-                    {item.label}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator />
-            </div>
-
+            {/* Nav lives in the hamburger drawer on small screens now — this
+                menu is account-only. */}
             <DropdownMenuLabel className="truncate font-normal text-muted-foreground">
               {email}
             </DropdownMenuLabel>

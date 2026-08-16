@@ -17,13 +17,17 @@ export type AuthFormState = { error: string } | undefined;
  * Only a same-origin relative path is a safe redirect target. Rejects
  * absolute URLs (no leading "/"), protocol-relative "//evil.com", and the
  * "/\evil.com" backslash variant some browsers still treat as "//".
+ *
+ * The default is "/home" (the authenticated dashboard), not "/" — "/" is now
+ * the public marketing page, which middleware would just bounce back to /home
+ * for a logged-in user anyway.
  */
 function safeNextPath(value: FormDataEntryValue | null): string {
   if (typeof value !== "string" || value.length === 0) {
-    return "/";
+    return "/home";
   }
   if (!/^\/(?!\/|\\)/.test(value)) {
-    return "/";
+    return "/home";
   }
   return value;
 }
