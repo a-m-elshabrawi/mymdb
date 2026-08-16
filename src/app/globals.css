@@ -80,6 +80,47 @@
   --radius-poster: var(--radius-poster);
 }
 
+/*
+ * Marketing poster-wall marquee. Each column renders its posters twice, back to
+ * back, so translating by exactly -50% lands the second copy where the first
+ * began — a seamless loop with no visible snap. Only `transform` is animated
+ * (never top/margin/background-position), so it stays on the compositor.
+ * `will-change` lives on the animated columns, never the tilted wrapper.
+ */
+@keyframes poster-marquee-up {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+@keyframes poster-marquee-down {
+  from {
+    transform: translate3d(0, -50%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.poster-wall-column {
+  will-change: transform;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* Under reduced motion, freeze the wall as a static tilted grid — deliberate,
+   not broken. Overrides the global 0.01ms fast-forward below, which would
+   otherwise leave columns parked mid-loop. */
+@media (prefers-reduced-motion: reduce) {
+  .poster-wall-column {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
