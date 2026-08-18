@@ -7,6 +7,33 @@ belong to you.
 **Status** v1 complete, all six stages shipped
 **Built** August 2026
 
+## Try it
+
+Live at **<https://mymdb-amber.vercel.app>**. There is a public demo account with a
+populated log, so you can see the product without signing up.
+
+| | |
+|---|---|
+| Email | `demo@mymdb.app` |
+| Password | `watchlog-demo-2026` |
+
+The demo log holds 67 titles: 44 watched, 3 shows in progress, 2 dropped and 18 on the
+watchlist, with 52 diary entries spread over 15 months, 32 of them carrying a written
+review and 4 marked as rewatches. Ratings run from 3 to 5 stars across 21 genres and 7
+decades, and the watchlist has titles in each of its runtime buckets, so the library
+sorting, the diary's month grouping, the watchlist's random picker and the dashboard stats
+all have something real to work on instead of an empty state.
+
+The demo account is an ordinary account with ordinary permissions, so anything a visitor
+changes there sticks. `npm run seed:demo` resets it: it deletes every row the demo user
+owns, rewrites them from `scripts/demo-data.ts`, refreshes the metadata from TMDB and
+reissues the password above. Viewing dates are stored as offsets from the run date rather
+than fixed calendar dates, so a reseed always produces a log that runs up to today.
+
+Nothing about the demo account is special-cased. It is scoped by the same RLS policies as
+every other account, so signing in as the demo user shows the demo user's log and nothing
+else.
+
 ## Why this exists
 
 Your own data is the product. What you watched, when, how you rated it, what you thought,
@@ -165,6 +192,8 @@ lib/
   tmdb/             The only place TMDB is called. index.ts is the public surface,
                     mappers.ts converts raw responses to domain types
   supabase/         Browser, server and admin clients kept separate on purpose
+scripts/
+  seed-demo.ts      Resets the public demo account. demo-data.ts is its catalogue
 supabase/
   migrations/       Incremental schema changes
 middleware.ts       Auth routing. / is exempt, gated routes redirect to /login?next=
